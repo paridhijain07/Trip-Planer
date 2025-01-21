@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const User = require("../models/usermodel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -21,10 +21,34 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-//pehle ise banwa lena
-// exports.signupuser = async function (req, res) {
+exports.signUpUser = async function (req, res) {
+    const { email, password, username, mobile } = req.body;
 
-//     const { email, password , username } = req.body;
-//     const kartik  = User.insertOne({email,password,username});
+    try {
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) {
+            return res.status(401).json({ message: "User already exists" });
+        }
 
-// }
+        // Hash the password
+       
+
+        // Create a new user
+        const newUser = new User({
+            email: email,
+            password: password, // Store the hashed password
+            username: username,
+            mobile: mobile,
+        });
+
+        // Save the user to MongoDB
+        const kartik = User.createOne({newUser})
+
+        // Send success response
+        res.status(201).json({ message: "User registered successfully" });
+    } catch (error) {
+        console.error("Error during user signup:", error);
+        res.status(500).json({ message: "Server error. Please try again later." });
+    }
+};
+

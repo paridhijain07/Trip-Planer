@@ -1,10 +1,10 @@
 const express = require("express");
-const { loginUser } = require("../controllers/authController");
+const { loginUser,signUpUser } = require("../controllers/authController");
 const authenticateToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/signup" , )
+router.post("/signup" ,signUpUser); 
 router.post("/login", loginUser);
 
 router.get("/protected", authenticateToken, (req, res) => {
