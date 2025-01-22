@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv=require('dotenv')
@@ -52,7 +52,7 @@ exports.signUpUser = async function (req, res) {
             email: email,
             password: password, // Store the hashed password
             username: username,
-            mobile: mobile,
+            
         });
 
         // Save the user to MongoDB
