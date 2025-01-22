@@ -1,7 +1,8 @@
-const User = require("../models/usermodel");
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const dotenv=require('dotenv')
+dotenv.config()
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -12,12 +13,25 @@ exports.loginUser = async (req, res) => {
     if (!user) return res.status(401).json({ message: "Invalid email or password" });
 
    
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,);
-    res.json({ token });
-  } catch (error) {
+    //else login the user
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    return res.json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+      },
+    })
+  } 
+  catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
