@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import mongoose from 'mongoose'
 // const userSchema=new mongoose.Schema({
 //     name:{
@@ -11,6 +12,22 @@
 //     password:{
 //         type:String,
 //         required:[true,'provide password']
+=======
+// const mongoose = require("mongoose");
+
+// const userSchema=new mongoose.Schema({
+//     name:{
+//         type:String,
+//         required:true,
+//     },
+//     email:{
+//         type:String,
+//         required:true, 
+//     },
+//     password:{
+//         type:String,
+//         required:true,
+>>>>>>> 3e66cdccac87f51dfa3cdbfd5be9e02baa969fd3
 //     },
 //     forgot_password_otp:{
 //         type:String,
@@ -47,5 +64,9 @@
 // },{
 //     timestamps:true,
 // })
+<<<<<<< HEAD
 // const userModel=mongoose.model('User',userSchema)
 // export default userModel;
+=======
+// module.exports = mongoose.model("User", userSchema);
+>>>>>>> 3e66cdccac87f51dfa3cdbfd5be9e02baa969fd3
