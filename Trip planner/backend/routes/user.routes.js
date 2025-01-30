@@ -1,0 +1,11 @@
+const express=require('express')
+const { signUpUser, verifyEmailController, loginUser,forgotPasswordController,verifyForgotPasswordOtp,logoutController } = require('../controllers/userController')
+const authenticateToken = require('../middleware/authMiddleware')
+const userRouter=express.Router()
+userRouter.post('/register',signUpUser)
+userRouter.post('/verify-email',verifyEmailController)
+userRouter.post('/login',loginUser)
+userRouter.post('/logout',authenticateToken,logoutController)
+userRouter.put('/forgot-password',forgotPasswordController)
+userRouter.put('/verify-forgot-password',verifyForgotPasswordOtp)
+module.exports=userRouter;
