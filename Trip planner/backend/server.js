@@ -13,16 +13,7 @@ app.use(express.json());
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
-  .then(() => {
-    // Use create() to add a new user
-    User.create({
-      username: "kartik123",
-      email: "kartikpal@gmail.com",
-      password: "9650536044",  // Consider hashing the password before storing
-    })
-      .then(() => console.log("User added"))
-      .catch((err) => console.log("Error adding user:", err));
-  })
+
   .catch((err) => console.log("Database connection error:", err));
 
 // Set up routes
