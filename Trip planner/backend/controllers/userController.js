@@ -207,39 +207,41 @@ const verifyForgotPasswordOtp=async (req, res)=> {
       });
   }
 }
-const logoutController=async (req,res)=>{
+const logoutController = async (req, res) => {
   try {
-    const userid = req.userId; // Ensure this comes from middleware
+    const userid = req.userId; 
     console.log("User ID for logout:", userid);
+
+    if (!req.cookies?.token) {
+      return res.status(400).json({ message: "No token provided" });
+    }
 
     // Clear cookies
     const cookieOption = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     };
-    res.clearCookie("accessToken", cookieOption);
-    res.clearCookie("refreshToken", cookieOption);
+    res.clearCookie("token", cookieOption); 
 
     // Reset refresh token in database
-    const user = await UserModel.findByIdAndUpdate(userid, { refresh_token: "" });
-    // console.log("Refresh token cleared for user:", user);
+    await User.findByIdAndUpdate(userid, { token: "" });
 
     return res.json({
-        message: "Logout Successfully!",
-        error: false,
-        success: true,
+      message: "Logout Successfully!",
+      error: false,
+      success: true,
     });
-} 
-catch (error) {
+  } catch (error) {
     console.error("Logout Error:", error.stack);
     return res.status(500).json({
-        message: error.message || "Internal Server Error",
-        error: true,
-        success: false,
+      message: error.message || "Internal Server Error",
+      error: true,
+      success: false,
     });
-}
-}
+  }
+};
+
 
 module.exports = {
   signUpUser,

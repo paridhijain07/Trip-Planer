@@ -21,12 +21,12 @@ const userSchema = new mongoose.Schema({
   type:Date,
   default:''
   },
-  
-
-<<<<<<< HEAD
+  token:{
+    type:String,
+    default:''
+  },
 });
-=======
->>>>>>> 3e66cdccac87f51dfa3cdbfd5be9e02baa969fd3
+
 // userSchema.pre("save", async function (next) {
 //   if (!this.isModified("password")) return next();
 //   this.password = await bcrypt.hash(this.password, 10);
