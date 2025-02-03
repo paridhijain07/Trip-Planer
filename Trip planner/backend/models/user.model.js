@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> f60fd474be83ce52dfaecf619039473769994b55
 // import mongoose from 'mongoose'
 // const userSchema=new mongoose.Schema({
 //     name:{
@@ -11,7 +14,12 @@
 //     },
 //     password:{
 //         type:String,
+<<<<<<< HEAD
 //         required:[true,'provide passwo
+=======
+//         required:[true,'provide password']
+
+>>>>>>> f60fd474be83ce52dfaecf619039473769994b55
 // const mongoose = require("mongoose");
 
 // const userSchema=new mongoose.Schema({
