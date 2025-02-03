@@ -314,11 +314,14 @@ const logoutController = async (req, res) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'None',
     };
-    res.clearCookie("accessToken", cookieOption);
-    res.clearCookie("refreshToken", cookieOption);
-
+    res.clearCookie("token", cookieOption);
+    
     // Reset refresh token in database
+
     const user = await User.findByIdAndUpdate(userid, { refresh_token: "" });
+
+    const user = await User.findByIdAndUpdate(userid, { token: "" });
+
     // console.log("Refresh token cleared for user:", user);
 
     return res.json({
