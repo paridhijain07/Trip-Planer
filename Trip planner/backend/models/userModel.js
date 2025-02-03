@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   type:Date,
   default:''
   },
-<<<<<<< HEAD
+
   access_token:{
     type:String,
     default:''
@@ -30,11 +30,6 @@ const userSchema = new mongoose.Schema({
     type:String,
     default:''
   }
-=======
-  
-
-
->>>>>>> f60fd474be83ce52dfaecf619039473769994b55
 });
 
 // userSchema.pre("save", async function (next) {
@@ -44,5 +39,6 @@ const userSchema = new mongoose.Schema({
 // });
 
 module.exports = mongoose.model("User", userSchema);
+
 
 
