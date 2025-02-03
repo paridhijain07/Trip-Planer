@@ -21,9 +21,15 @@ const userSchema = new mongoose.Schema({
   type:Date,
   default:''
   },
-  
 
-
+  access_token:{
+    type:String,
+    default:''
+  },
+  refresh_token:{
+    type:String,
+    default:''
+  }
 });
 
 // userSchema.pre("save", async function (next) {
@@ -33,5 +39,6 @@ const userSchema = new mongoose.Schema({
 // });
 
 module.exports = mongoose.model("User", userSchema);
+
 
 

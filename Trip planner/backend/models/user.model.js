@@ -10,7 +10,11 @@
 //     },
 //     password:{
 //         type:String,
+
+//         required:[true,'provide passwo
+
 //         required:[true,'provide password']
+
 
 // const mongoose = require("mongoose");
 
