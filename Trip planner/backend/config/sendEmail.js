@@ -2,7 +2,7 @@ const { Resend } = require('resend');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API); // Instantiate Resend properly
+const resend = new Resend(process.env.RESEND_API);
 
 const sendEmail = async ({ sendTo, subject, html }) => {
     try {

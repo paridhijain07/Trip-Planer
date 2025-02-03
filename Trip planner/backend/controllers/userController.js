@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const generateAccessToken=require('../utils/generateAccessToken')
+const generateRefreshToken=require('../utils/generateRefreshToken')
 const dotenv=require('dotenv');
 // const userModel = require("../models/userModel");
 const generateOtp = require("../utils/generateOtp");
@@ -9,36 +11,98 @@ const forgotPasswordTemplate=require('../utils/forgotPasswordTemplate')
 dotenv.config()
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
 
-  try {
+  // try {
    
-    const user = await User.findOne({ email });
-    if (!user) return res.status(401).json(
-      { message: "Invalid email or password" });
+  //   const user = await User.findOne({ email });
+  //   if (!user) return res.status(401).json(
+  //     { message: "Invalid email or password" });
       
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
+  //   const isMatch = await bcrypt.compare(password, user.password);
+  //   if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
 
-    //else login the user
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+  //   //else login the user
+  //   const token = jwt.sign(
+  //     { id: user._id },
+  //     process.env.JWT_SECRET,
+  //     { expiresIn: "1h" }
+  //   );
+  //   return res.json({
+  //     token,
+  //     user: {
+  //       id: user._id,
+  //       email: user.email,
+  //       username: user.username,
+  //     },
+  //   })
+  // } 
+  // catch (error) {
+  //   res.status(500).json({ error: "Server error" });
+  // }
+  try {
+    const { email, password } = req.body;
+    // Validate the input fields
+    if (!email || !password) {
+        return res.status(400).json({
+            message: 'Both email and password are required.',
+            error: true,
+            success: false,
+        });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(400).json({
+            message: 'User not registered',
+            error: true,
+            success: false,
+        });
+    }
+    const checkPassword = await bcrypt.compare(password, user.password);
+    if (!checkPassword) {
+        return res.status(400).json({
+            message: 'Incorrect password',
+            error: true,
+            success: false,
+        });
+    }
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    // Log the tokens to check their values
+    console.log("Access Token:", accessToken);
+    console.log("Refresh Token:", refreshToken);
+
+    const cookieOption = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'None',
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days expiry
+    };
+
+    res.cookie('accessToken', accessToken, cookieOption);
+    res.cookie('refreshToken', refreshToken, cookieOption);
+
     return res.json({
-      token,
-      user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-      },
-    })
-  } 
-  catch (error) {
-    res.status(500).json({ error: "Server error" });
-  }
+        message: 'Login successful',
+        error: false,
+        success: true,
+        data: {
+            accessToken,
+            refreshToken,
+        },
+    });
+} catch (error) {
+    console.error(error.stack);
+    return res.status(500).json({
+        message: error.message || 'Internal Server Error',
+        error: true,
+        success: false,
+    });
+}
 };
+
 const signUpUser = async function (req, res) {
     const { email, password, username, mobile } = req.body;
 
@@ -208,40 +272,69 @@ const verifyForgotPasswordOtp=async (req, res)=> {
   }
 }
 const logoutController = async (req, res) => {
-  try {
-    const userid = req.userId; 
-    console.log("User ID for logout:", userid);
+  // try {
+  //   const userid = req.userId; 
+  //   console.log("User ID for logout:", userid);
 
-    if (!req.cookies?.token) {
-      return res.status(400).json({ message: "No token provided" });
-    }
+  //   if (!req.cookies?.token) {
+  //     return res.status(400).json({ message: "No token provided" });
+  //   }
+
+  //   // Clear cookies
+  //   const cookieOption = {
+  //     httpOnly: true,
+  //     secure: process.env.NODE_ENV === "production",
+  //     sameSite: "None",
+  //   };
+  //   res.clearCookie("token", cookieOption); 
+
+  //   // Reset refresh token in database
+  //   await User.findByIdAndUpdate(userid, { token: "" });
+
+  //   return res.json({
+  //     message: "Logout Successfully!",
+  //     error: false,
+  //     success: true,
+  //   });
+  // } catch (error) {
+  //   console.error("Logout Error:", error.stack);
+  //   return res.status(500).json({
+  //     message: error.message || "Internal Server Error",
+  //     error: true,
+  //     success: false,
+  //   });
+  // }
+  try {
+    const userid = req.userId; // this comes from authMiddleware
+    console.log("User ID for logout:", userid);
 
     // Clear cookies
     const cookieOption = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'None',
     };
-    res.clearCookie("token", cookieOption); 
+    res.clearCookie("accessToken", cookieOption);
+    res.clearCookie("refreshToken", cookieOption);
 
     // Reset refresh token in database
-    await User.findByIdAndUpdate(userid, { token: "" });
+    const user = await User.findByIdAndUpdate(userid, { refresh_token: "" });
+    // console.log("Refresh token cleared for user:", user);
 
     return res.json({
-      message: "Logout Successfully!",
-      error: false,
-      success: true,
+        message: "Logout Successfully!",
+        error: false,
+        success: true,
     });
-  } catch (error) {
+} catch (error) {
     console.error("Logout Error:", error.stack);
     return res.status(500).json({
-      message: error.message || "Internal Server Error",
-      error: true,
-      success: false,
+        message: error.message || "Internal Server Error",
+        error: true,
+        success: false,
     });
+}
   }
-};
-
 
 module.exports = {
   signUpUser,
