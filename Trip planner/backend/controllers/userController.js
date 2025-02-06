@@ -8,7 +8,27 @@ const dotenv=require('dotenv');
 const generateOtp = require("../utils/generateOtp");
 const sendEmail = require("../config/sendEmail");
 const forgotPasswordTemplate=require('../utils/forgotPasswordTemplate')
+const getRoute=require("../utils/graphhopperService")
 dotenv.config()
+const routefinder = async (req, res) => {
+  try {
+    const { startLat, startLon, endLat, endLon, profile } = req.query;
+
+    if (!startLat || !startLon || !endLat || !endLon) {
+      return res.status(400).json({ message: "Missing required parameters" });
+    }
+
+    const start = { lat: startLat, lon: startLon };
+    const end = { lat: endLat, lon: endLon };
+    const travelMode = profile || "car"; // Default to car
+
+    const routeData = await getRoute(start, end, travelMode);
+    res.json(routeData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 
 const loginUser = async (req, res) => {
   // const { email, password } = req.body;
@@ -225,8 +245,7 @@ const verifyForgotPasswordOtp=async (req, res)=> {
 
       // Get current time in IST
       const currentTime = new Date();
-      const istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
-      const currentIST = new Date(currentTime.getTime() + istOffset);
+      const currentIST = new Date(currentTime.getTime());
       // Convert stored expiry to IST for logging
       const expiryIST = new Date(user.forgot_password_expiry.getTime());
       
@@ -343,6 +362,7 @@ module.exports = {
   forgotPasswordController,
   verifyForgotPasswordOtp,
   logoutController,
+  routefinder,
 };
 
 
