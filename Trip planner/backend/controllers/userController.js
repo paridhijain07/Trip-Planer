@@ -291,73 +291,43 @@ const verifyForgotPasswordOtp=async (req, res)=> {
   }
 }
 const logoutController = async (req, res) => {
-  // try {
-  //   const userid = req.userId; 
-  //   console.log("User ID for logout:", userid);
-
-  //   if (!req.cookies?.token) {
-  //     return res.status(400).json({ message: "No token provided" });
-  //   }
-
-  //   // Clear cookies
-  //   const cookieOption = {
-  //     httpOnly: true,
-  //     secure: process.env.NODE_ENV === "production",
-  //     sameSite: "None",
-  //   };
-  //   res.clearCookie("token", cookieOption); 
-
-  //   // Reset refresh token in database
-  //   await User.findByIdAndUpdate(userid, { token: "" });
-
-  //   return res.json({
-  //     message: "Logout Successfully!",
-  //     error: false,
-  //     success: true,
-  //   });
-  // } catch (error) {
-  //   console.error("Logout Error:", error.stack);
-  //   return res.status(500).json({
-  //     message: error.message || "Internal Server Error",
-  //     error: true,
-  //     success: false,
-  //   });
-  // }
   try {
-    const userid = req.userId; // this comes from authMiddleware
+    const userid = req.userId; 
     console.log("User ID for logout:", userid);
 
-    // Clear cookies
-    const cookieOption = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+    // Check if accessToken exists in cookies
+    if (!req.cookies?.accessToken) {
+      return res.status(400).json({ message: "No token provided" });
+    }
+
+    // Clear accessToken and refreshToken cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     };
-    res.clearCookie("token", cookieOption);
-    
-    // Reset refresh token in database
+    res.clearCookie("accessToken", cookieOptions);
+    res.clearCookie("refreshToken", cookieOptions);
 
-    const user = await User.findByIdAndUpdate(userid, { refresh_token: "" });
-
-    const user = await User.findByIdAndUpdate(userid, { token: "" });
-
-    // console.log("Refresh token cleared for user:", user);
+    // Remove tokens from the database
+    await User.findByIdAndUpdate(userid, { 
+      $unset: { refresh_token: "", access_token: "" } 
+    });
 
     return res.json({
-        message: "Logout Successfully!",
-        error: false,
-        success: true,
+      message: "Logout Successfully!",
+      error: false,
+      success: true,
     });
-} catch (error) {
+  } catch (error) {
     console.error("Logout Error:", error.stack);
     return res.status(500).json({
-        message: error.message || "Internal Server Error",
-        error: true,
-        success: false,
+      message: error.message || "Internal Server Error",
+      error: true,
+      success: false,
     });
-}
   }
-
+};
 module.exports = {
   signUpUser,
   verifyEmailController,
