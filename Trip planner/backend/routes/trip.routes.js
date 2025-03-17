@@ -8,39 +8,42 @@ const tripRouter = express.Router();
  * Example Request: POST /api/trip/route
  */
 tripRouter.post("/route", async (req, res) => {
-    const { locations } = req.body; // Expecting [{ lat, lng }, { lat, lng }, ...]
+  const { locations } = req.body; // Expecting [{ lat, lng }, { lat, lng }, ...]
 
-    if (!locations || locations.length < 2) {
-        return res.status(400).json({ error: "At least two locations are required" });
-    }
+  if (!locations || locations.length < 2) {
+    return res.status(400).json({ error: "At least two locations are required" });
+  }
 
-    const coords = locations.map((loc) => [loc.lat, loc.lng]); // Convert to array format
-    const routeData = await getOptimizedRoute(coords);
+  const coords = locations.map((loc) => [loc.lat, loc.lng]);
+  const routeData = await getOptimizedRoute(coords);
 
-    if (!routeData) {
-        return res.status(500).json({ error: "Failed to fetch route" });
-    }
+  console.log("✅ GraphHopper Response:", JSON.stringify(routeData, null, 2)); // Debugging
 
-    res.json(routeData);
+  if (!routeData || !routeData.paths || !routeData.paths.length) {
+    return res.status(500).json({ error: "Failed to fetch route" });
+  }
+
+  res.json(routeData.paths[0]);
 });
-  
+
 /**
  * Route to convert an address to latitude/longitude
  * Example Request: GET /api/trip/geocode?address=New Delhi
  */
 tripRouter.get("/geocode", async (req, res) => {
-    const { address } = req.query;
+  const { address } = req.query;
 
-    if (!address) {
-        return res.status(400).json({ error: "Address is required" });
-    }
+  if (!address) {
+    return res.status(400).json({ error: "Address is required" });
+  }
 
-    const locationData = await getGeoCode(address);
+  const locationData = await getGeoCode(address);
 
-    if (!locationData) {
-        return res.status(500).json({ error: "Failed to fetch geocode" });
-    }
+  if (!locationData) {
+    return res.status(500).json({ error: "Failed to fetch geocode" });
+  }
 
-    res.json(locationData);
+  res.json(locationData);
 });
+
 module.exports = tripRouter;

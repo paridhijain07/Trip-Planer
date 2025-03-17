@@ -6,6 +6,8 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import ForgotPassword from '../pages/ForgotPassword'
 import OtpVerification from '../pages/OtpVerification'
+import MapComponent from '../pages/MapComponent'
+import Logout from '../pages/Logout'
 const router = createBrowserRouter([
     {
         path:'/',
@@ -30,7 +32,20 @@ const router = createBrowserRouter([
             {
                 path:'verify-forgot-password',
                 element:<OtpVerification></OtpVerification>
+            },
+            {
+                path:'logout',
+                element:<Logout></Logout>
+            },
+            {
+                path:'route',
+                element:<MapComponent></MapComponent>
+            },
+            {
+                path:'geocode',
+                element:<MapComponent></MapComponent>
             }
+
         ]
     }
 ])

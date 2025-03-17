@@ -1,4 +1,4 @@
-export const baseURL='http://localhost:5000'
+export const baseURL='http://localhost:3000'
 const summaryAPI={
     register:{
         url:'/api/user/register',
@@ -6,6 +6,10 @@ const summaryAPI={
     },
     login:{
         url:'/api/user/login',
+        method:'post'
+    },
+    logout:{
+        url:'/api/user/logout',
         method:'post'
     },
     forgotPassword:{
@@ -20,5 +24,13 @@ const summaryAPI={
         url:'/api/user/refresh-token',
         method:'post'
     },
+    route:{
+        url:'/api/trip/route',
+        method:'post'
+    },
+    geocode:{
+        url:'/api/trip/geocode',
+        method:'get'
+    }
 }
 export default summaryAPI;

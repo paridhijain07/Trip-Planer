@@ -8,5 +8,5 @@ userRouter.post('/login',loginUser)
 userRouter.post('/logout',authenticateToken,logoutController)
 userRouter.put('/forgot-password',forgotPasswordController)
 userRouter.put('/verify-forgot-password',verifyForgotPasswordOtp)
-userRouter.get("/route",routefinder)
+// userRouter.get("/route",routefinder)
 module.exports=userRouter;

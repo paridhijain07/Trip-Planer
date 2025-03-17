@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/NavBar";
 import { Link } from "react-router-dom";
 import heroImage1 from "../assets/hero.jpg"; 
 import heroImage2 from "../assets/hero3.jpg";
-import Footer from "../components/Footer";
 const LandingPage = () => {
   const [currentImage, setCurrentImage] = useState(heroImage1);
 

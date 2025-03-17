@@ -57,9 +57,7 @@ const Register = () => {
     catch (error) {
         AxiosToastError(error)
     }
-    
   }
-
   return (
     <section className="w-full px-6 container mx-auto">
       <div className="bg-white p-4 my-4 max-w-lg mx-auto rounded">
@@ -77,7 +75,6 @@ const Register = () => {
               onChange={handleChange}
             />
           </div>
-
           {/* Email Field */}
           <div className="grid gap-1">
             <label htmlFor="email">Email:</label>

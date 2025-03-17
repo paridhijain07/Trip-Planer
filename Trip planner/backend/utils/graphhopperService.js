@@ -1,70 +1,59 @@
-// const axios = require("axios");
-// const dotenv=require('dotenv')
-// dotenv.config();
-
-// const GRAPHOPPER_API_KEY = process.env.GRAPHHOPPER_API_KEY;
-// const BASE_URL = "https://graphhopper.com/api/1/route";
-
-
-// const getRoute = async (start, end, profile = "car") => {
-//   try {
-//     const url = `${BASE_URL}?point=${start.lat},${start.lon}&point=${end.lat},${end.lon}&profile=${profile}&locale=en&calc_points=true&key=${GRAPHOPPER_API_KEY}`;
-
-//     const response = await axios.get(url);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching route:", error);
-//     throw new Error("Failed to fetch route");
-//   }
-// };
-
-// module.exports =  getRoute ;
-
 const axios = require("axios");
 require("dotenv").config();
 
 const GRAPHOPPER_BASE_URL = "https://graphhopper.com/api/1";
 const API_KEY = process.env.GRAPHHOPPER_API_KEY;
 
+if (!API_KEY) {
+  throw new Error(" Missing GraphHopper API key in environment variables.");
+}
+
 /**
- * Get route details between multiple locations.
+ * Get an optimized route between multiple locations.
  * @param {Array} locations - Array of [latitude, longitude] pairs
- * @returns {Object} - Route details
+ * @returns {Object} - Route details or error
  */
 const getOptimizedRoute = async (locations) => {
-    try {
-        const url = `${GRAPHOPPER_BASE_URL}/route?key=${API_KEY}`;
+  try {
+    const url = `${GRAPHOPPER_BASE_URL}/route?key=${API_KEY}`;
+    const data = {
+      points: locations,
+      vehicle: "car",
+      instructions: true,
+      points_encoded: false, 
+    };
 
-        const data = {
-            points: locations, // Array of [latitude, longitude]
-            vehicle: "car", // Can be bike, foot, etc.
-            instructions: true,
-            optimize: true
-        };
+    const response = await axios.post(url, data, {
+      headers: { "Content-Type": "application/json" },
+    });
 
-        const response = await axios.post(url, data);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching route:", error.message);
-        return null;
-    }
+    return response.data;
+  } catch (error) {
+    console.error("❌ GraphHopper API Error:", error.response?.data || error.message);
+    return { error: "Failed to fetch optimized route." };
+  }
 };
 
 /**
- * Get Geocoding details from an address.
+ * Convert an address to latitude/longitude using Geocode API.
  * @param {string} address - User input address
- * @returns {Object} - Geolocation details
+ * @returns {Object|null} - Geolocation details or error
  */
 const getGeoCode = async (address) => {
-    try {
-        const url = `${GRAPHOPPER_BASE_URL}/geocode?q=${encodeURIComponent(address)}&limit=1&key=${API_KEY}`;
-        const response = await axios.get(url);
-        return response.data.hits[0]; // Return first matched location
-    } catch (error) {
-        console.error("Error fetching geocode:", error.message);
-        return null;
+  try {
+    const url = `${GRAPHOPPER_BASE_URL}/geocode?q=${encodeURIComponent(address)}&limit=1&key=${API_KEY}`;
+    const response = await axios.get(url);
+
+    if (!response.data.hits.length) {
+      console.warn(" No results found for address:", address);
+      return { error: "No geocode results found." };
     }
+
+    return response.data.hits[0];
+  } catch (error) {
+    console.error(" Error fetching geocode:", error.response?.data || error.message);
+    return { error: "Failed to fetch geocode." };
+  }
 };
 
 module.exports = { getOptimizedRoute, getGeoCode };
-
