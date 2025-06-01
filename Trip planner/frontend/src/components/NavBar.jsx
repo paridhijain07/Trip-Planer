@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/authSlice"; 
+import { logoutSuccess } from "../store/authSlice"; 
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
@@ -7,7 +7,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutSuccess());
   };
 
   return (
@@ -20,7 +20,7 @@ const Navbar = () => {
 
         {user ? (
           <div className="flex items-center gap-4">
-            <span className="text-white font-bold">Hello, {user.email}!</span>
+            <span className="text-white font-bold">Hello, {user.username}!</span>
             <button
               onClick={handleLogout}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"

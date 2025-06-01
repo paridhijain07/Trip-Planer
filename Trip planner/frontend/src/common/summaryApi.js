@@ -31,6 +31,10 @@ const summaryAPI={
     geocode:{
         url:'/api/trip/geocode',
         method:'get'
+    },
+    resetPassword:{
+        url:'/api/user/reset-password',
+        method:'post'
     }
 }
 export default summaryAPI;

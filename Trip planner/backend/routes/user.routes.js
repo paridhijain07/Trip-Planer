@@ -1,5 +1,5 @@
 const express=require('express')
-const { signUpUser, verifyEmailController, loginUser,forgotPasswordController,verifyForgotPasswordOtp,logoutController,routefinder } = require('../controllers/userController')
+const { signUpUser, verifyEmailController, loginUser,forgotPasswordController,verifyForgotPasswordOtp,logoutController,routefinder,resetPasswordController } = require('../controllers/userController')
 const authenticateToken = require('../middleware/authMiddleware')
 const userRouter=express.Router()
 userRouter.post('/register',signUpUser)
@@ -8,5 +8,6 @@ userRouter.post('/login',loginUser)
 userRouter.post('/logout',authenticateToken,logoutController)
 userRouter.put('/forgot-password',forgotPasswordController)
 userRouter.put('/verify-forgot-password',verifyForgotPasswordOtp)
+userRouter.post('/reset-password',resetPasswordController)
 // userRouter.get("/route",routefinder)
 module.exports=userRouter;

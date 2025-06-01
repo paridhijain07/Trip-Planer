@@ -105,14 +105,19 @@ const loginUser = async (req, res) => {
     res.cookie('refreshToken', refreshToken, cookieOption);
 
     return res.json({
-        message: 'Login successful',
-        error: false,
-        success: true,
-        data: {
-            accessToken,
-            refreshToken,
+    message: 'Login successful',
+    error: false,
+    success: true,
+    data: {
+        user: {
+          id: user._id,
+          email: user.email,
+          username: user.username,
         },
-    });
+        accessToken,
+        refreshToken,
+    },
+});
 } catch (error) {
     console.error(error.stack);
     return res.status(500).json({
@@ -270,7 +275,7 @@ const verifyForgotPasswordOtp=async (req, res)=> {
           });
       }
 
-      // Clear OTP afte verification
+      // Clear OTP after verification
       await User.findByIdAndUpdate(user._id, {
           forgot_password_otp: null,
           forgot_password_expiry: null
@@ -328,6 +333,57 @@ const logoutController = async (req, res) => {
     });
   }
 };
+const resetPasswordController = async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "Email, new password, and confirm password are required",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "Passwords do not match",
+        error: true,
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+    });
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal Server Error",
+      error: true,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   signUpUser,
   verifyEmailController,
@@ -336,6 +392,7 @@ module.exports = {
   verifyForgotPasswordOtp,
   logoutController,
   routefinder,
+  resetPasswordController,
 };
 
 
