@@ -24,16 +24,20 @@ const summaryAPI={
         url:'/api/user/refresh-token',
         method:'post'
     },
-    route:{
-        url:'/api/trip/route',
-        method:'post'
-    },
-    geocode:{
-        url:'/api/trip/geocode',
-        method:'get'
-    },
+    // route:{
+    //     url:'/api/trip/route',
+    //     method:'post'
+    // },
+    // geocode:{
+    //     url:'/api/trip/geocode',
+    //     method:'get'
+    // },
     resetPassword:{
         url:'/api/user/reset-password',
+        method:'post'
+    },
+    tripForm:{
+        url:'/api/trip',
         method:'post'
     }
 }

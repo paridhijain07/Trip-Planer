@@ -9,6 +9,7 @@ import OtpVerification from '../pages/OtpVerification'
 import MapComponent from '../pages/MapComponent'
 import Logout from '../pages/Logout'
 import ResetPassword from '../pages/ResetPassword'
+import TripForm from '../pages/TripForm'
 const router = createBrowserRouter([
     {
         path:'/',
@@ -38,18 +39,23 @@ const router = createBrowserRouter([
                 path:'logout',
                 element:<Logout></Logout>
             },
-            {
-                path:'route',
-                element:<MapComponent></MapComponent>
-            },
-            {
-                path:'geocode',
-                element:<MapComponent></MapComponent>
-            },
+            // {
+            //     path:'route',
+            //     element:<MapComponent></MapComponent>
+            // },
+            // {
+            //     path:'geocode',
+            //     element:<MapComponent></MapComponent>
+            // },
             {
                 path:'reset-password',
                 element:<ResetPassword />
+            },
+            {
+                path:'trip-form',
+                element:<TripForm />
             }
+
 
         ]
     }
